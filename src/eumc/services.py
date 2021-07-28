@@ -25,7 +25,7 @@ def _load_prn_df(f, sep='	',names=prn_columns):
     f = io.StringIO(f)
     return pd.read_csv(f, sep=sep, names=names)
 
-def create_prn(eumc_drug_obj, prn_input_data):
+def create_prn(eumc_drug_obj, prn_input_data, inj_groups):
     df_drug = _load_drug_df(eumc_drug_obj.rawdata.file)
     df_prn = _load_prn_df(prn_input_data)
     df_prn = pd.merge(df_prn, df_drug, on=['약품코드'])
@@ -34,7 +34,7 @@ def create_prn(eumc_drug_obj, prn_input_data):
     df_prn[['함량_amt', '함량_unit']] = df_prn['함량'].str.extract(r'(\d+)\s*(\w+)')
     df_prn = df_prn.astype({'투여량_amt': np.float64, '함량_amt': np.float64})
     df_prn['수량'] = np.where(df_prn['환산단위']==df_prn['투여량_unit'], df_prn['투여량_amt'], df_prn['투여량_amt']/df_prn['함량_amt'])
-    exp_mask = df_prn['주사그룹번호(입)'].isin(['고가약', '고위험', '냉장약', '일반2'])
+    exp_mask = df_prn['주사그룹번호(입)'].isin(inj_groups)
     df_ret = df_prn[exp_mask]
     df_ret = df_ret.groupby(['약품명', '환산단위', '주사그룹번호(입)'], group_keys=False).agg('sum')[['수량']].reset_index()
     df_ret = df_ret[['약품명', '수량', '환산단위','주사그룹번호(입)']]

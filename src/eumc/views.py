@@ -16,8 +16,9 @@ def prn_count(request):
         return render(request, 'eumc/prn_count.html', context)
     if form.is_valid():
         prn_data = form.cleaned_data['data']
+        inj_groups = form.cleaned_data['injgroups']
         obj = EumcDrugData.objects.last()
-        ret = create_prn(obj, prn_data)
+        ret = create_prn(obj, prn_data, inj_groups)
         context = {
             'prn_list': ret.to_dict('record')
         }
