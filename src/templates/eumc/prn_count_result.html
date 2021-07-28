@@ -1,0 +1,23 @@
+
+{% if prn_list %}
+    
+<table border="2">
+    <thead>
+        {% for column in prn_list.0.keys %}
+        <th>{{ column }}</th>
+        {% endfor %} 
+    </thead>
+    <tbody>
+        {% for prn in prn_list %}
+        <tr>
+            {% for val in prn.values %}
+            <td>{{ val }}</td>
+            {% endfor %}
+        </tr> 
+        {% endfor %}            
+    </tbody>
+</table>
+
+{% else %}
+<p>결과값이 없습니다.</p>
+{% endif %}
