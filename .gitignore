@@ -9,7 +9,6 @@
 /static
 
 media/
-static/
 __pycache__/
 .vscode/
 share/

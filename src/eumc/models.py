@@ -6,7 +6,7 @@ LOCATIONS = [
 ]
 
 class EumcDrugData(models.Model):
-    rawdata = models.FileField('약품정보파일', upload_to='media/eumc')
+    rawdata = models.FileField('약품정보파일', upload_to='eumc')
     location = models.CharField('위치', choices=LOCATIONS, max_length=50)
     created = models.DateTimeField('생성일시', auto_now_add=True)
     updated = models.DateTimeField('수정일시', auto_now=True)

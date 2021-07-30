@@ -1,6 +1,8 @@
 from re import template
 from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.utils.safestring import mark_safe
+
 
 from .models import EumcDrugData
 from .forms import PrnDataInputForm
@@ -15,11 +17,9 @@ def prn_count(request):
         }
         return render(request, 'eumc/prn_count.html', context)
     if form.is_valid():
-        prn_data = form.cleaned_data['data']
-        inj_groups = form.cleaned_data['injgroups']
-        obj = EumcDrugData.objects.last()
-        ret = create_prn(obj, prn_data, inj_groups)
+        obj = EumcDrugData.objects.first()
+        rendered_table = create_prn(obj, **form.cleaned_data)
         context = {
-            'prn_list': ret.to_dict('record')
+            'table': mark_safe(rendered_table)
         }
         return render(request, 'eumc/prn_count_result.html', context)
