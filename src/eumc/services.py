@@ -2,6 +2,7 @@ import re, math
 import pandas as pd
 import numpy as np
 import io
+from datetime import datetime
 
 from pandas.core import groupby
 
@@ -56,9 +57,10 @@ def create_prn(eumc_drug_obj, prndata, injgroups, bywords=False):
     df_ret = df_ret[['주사그룹번호(입)', '약품명', '수량', '환산단위']]
     df_ret = df_ret.sort_values(['주사그룹번호(입)', '약품명'])        
     df_ret = df_ret.astype({'수량': np.int64})
-    
+
+    count_at = datetime.now().strftime("%Y-%m-%d %H:%M:%s")
     table_html = df_ret.to_html(classes='table table-sm table-bordered', justify='center', index=False)
-    table_html+= f"<p>최종처방입력일시: {ordered_last}</p>"
+    table_html+= f"<p>집계일시: {count_at}</p>"
     if bywords is True:
         table_html+=pvt_html
     return table_html

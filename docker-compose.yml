@@ -11,8 +11,6 @@ services:
     depends_on:
       - python
 
-
-
   python:
     container_name: python
     build: .
