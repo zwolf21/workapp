@@ -36,7 +36,7 @@ def create_prn(eumc_drug_obj, prndata, injgroups, bywords=False):
     df_drug = _load_drug_df(eumc_drug_obj.rawdata.file)
     df_prn = _load_prn_df(prndata)
     df_prn = pd.merge(df_prn, df_drug, left_on=['약품명'], right_on=['상용약품명'])
-    df_prn = df_prn[['약품코드', '발행처', '약품명', '기본투여단위', '함량', '환산단위', '투여량', '주사그룹번호(입)', '입력일시']]
+    df_prn = df_prn[['발행처', '약품명', '기본투여단위', '함량', '환산단위', '투여량', '주사그룹번호(입)', '입력일시']]
     df_prn[['투여량_amt', '투여량_unit']] = df_prn['투여량'].str.extract(r'(\d*\.?\d)\s*(\w+)')
     df_prn[['함량_amt', '함량_unit']] = df_prn['함량'].str.extract(r'(\d*\.?\d)\s*(\w+)')
     df_prn = df_prn.astype({'투여량_amt': np.float64, '함량_amt': np.float64})
@@ -44,7 +44,7 @@ def create_prn(eumc_drug_obj, prndata, injgroups, bywords=False):
     df_prn['수량'] = np.ceil(df_prn['수량'])
     
     ordered_last = df_prn['입력일시'].max() # 최종 오더시간 구하기
-    injgroups = injgroups or ['고가', '고위험', '냉장약', '일반2']
+    injgroups = injgroups or ['고가약', '고위험', '냉장약', '일반2']
     exp_mask = df_prn['주사그룹번호(입)'].isin(injgroups)
     df_ret = df_prn[exp_mask]
 
