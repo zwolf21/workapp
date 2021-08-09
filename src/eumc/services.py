@@ -44,7 +44,7 @@ def create_prn(eumc_drug_obj, prndata, injgroups, bywords=False):
     df_prn['수량'] = np.ceil(df_prn['수량'])
     
     ordered_last = df_prn['입력일시'].max() # 최종 오더시간 구하기
-    injgroups = injgroups or ['고가', '고위험', '냉장약', '일반2']
+    injgroups = injgroups or ['고가약', '고위험', '냉장약', '일반2']
     exp_mask = df_prn['주사그룹번호(입)'].isin(injgroups)
     df_ret = df_prn[exp_mask]
 
