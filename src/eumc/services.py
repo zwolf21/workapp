@@ -48,7 +48,7 @@ def create_prn(eumc_drug_obj, prndata, injgroups, bywords=False):
     df_drug = _load_drug_df(eumc_drug_obj.rawdata.file)
     df_prn = _load_prn_df(prndata)
     df_prn = pd.merge(df_prn, df_drug, left_on=['약품명'], right_on=['상용약품명'])
-    df_prn = df_prn[['약품코드','발행처', '약품명', '기본투여단위', '함량', '규격', '환산단위', '투여량', '주사그룹번호(입)', '입력일시']]
+    df_prn = df_prn[['발행처', '약품명', '기본투여단위', '함량', '규격', '환산단위', '투여량', '주사그룹번호(입)', '입력일시']]
 
 
     # '15 ml' -> [15, 'ml'] '0.075 mg' -> [0.075, 'mg']: X_amt, X_unit
