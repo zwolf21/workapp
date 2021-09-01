@@ -5,6 +5,5 @@ from .views import  PrnCountView
 app_name = 'eumc'
 
 urlpatterns = [
-    # path('prn-count', prn_count, name='prn-count'),
-    path('prn-count-test', PrnCountView.as_view(), name='prn-count-test'),
+    path('prn-count', PrnCountView.as_view(), name='prn-count'),
 ]
