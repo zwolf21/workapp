@@ -1,11 +1,12 @@
 from django.db import models
 
+from hitcount.models import HitCountMixin
 
 LOCATIONS = [
     ('mokdong', '이대목동'), ('seoul', '이대서울')
 ]
 
-class EumcDrugData(models.Model):
+class EumcDrugData(models.Model, HitCountMixin):
     rawdata = models.FileField('약품정보파일', upload_to='eumc')
     location = models.CharField('위치', choices=LOCATIONS, max_length=50)
     created = models.DateTimeField('생성일시', auto_now_add=True)
@@ -17,7 +18,7 @@ class EumcDrugData(models.Model):
         ordering = '-created',
     
     def __str__(self) -> str:
-        return self.created.strftime("%Y-%m-%d")
+        return str(self.rawdata)
 
 
 

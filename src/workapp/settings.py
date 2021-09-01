@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'hitcount',
     'django_extensions',
     'django_cleanup', # 모델삭제시 파일필드도 같이 정리: signal 사용으로 마지막에 위치하는것을 추천
 
@@ -132,3 +133,7 @@ MEDIA_ROOT = ENV_DIR /'media'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# hit count
+HITCOUNT_KEEP_HIT_ACTIVE = { 'seconds': 1 } # days, hours, weeks,
+HITCOUNT_KEEP_HIT_IN_DATABASE = { 'days': 30000 }

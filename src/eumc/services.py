@@ -1,11 +1,14 @@
-import re
-import math
+import re, io
+
 import pandas as pd
 import numpy as np
-import io
 from datetime import datetime
 
-from pandas.core import groupby
+
+PRN_COLUMNS = [
+    '발행처', '등록번호', '환자명', 'No.', '약품코드', '약품명', '투여량', '횟수', '일수', '총량', '용법', 'ADC', 'PRN', '퇴원', '처방의사', '입력일시',
+    '투약번호', '차수', '접수일시'
+]
 
 
 def _load_drug_df(f, ini_header_name='약품코드', _find_header_retry=5, _header=0):
@@ -19,12 +22,6 @@ def _load_drug_df(f, ini_header_name='약품코드', _find_header_retry=5, _head
 
     df = df.rename(lambda n: re.sub("\s+|_x000D_", '', n), axis='columns')
     return df
-
-
-PRN_COLUMNS = [
-    '발행처', '등록번호', '환자명', 'No.', '약품코드', '약품명', '투여량', '횟수', '일수', '총량', '용법', 'ADC', 'PRN', '퇴원', '처방의사', '입력일시',
-    '투약번호', '차수', '접수일시'
-]
 
 
 def _load_prn_df(f, sep='	', names=PRN_COLUMNS):
@@ -41,7 +38,6 @@ def _split_amtunit(df, columns, pfix_amt='amt', pfix_unit='unit', amt_astype=np.
         df[[column_amt, column_unit]] = df[column].str.extract(r"(\d*\.?\d+)\s*(\w+)")
         df = df.astype({column_amt: amt_astype})
     return df
-
 
 
 def create_prn(eumc_drug_obj, prndata, injgroups, bywords=False):
@@ -75,19 +71,20 @@ def create_prn(eumc_drug_obj, prndata, injgroups, bywords=False):
     df_ret = df_prn[exp_mask]
 
     if bywords is True:
-        df_pvt = pd.pivot_table(df_ret, values=['수량'], index=['주사그룹번호(입)', '약품명', '발행처'], aggfunc='sum')
-        df_pvt = df_pvt.astype({'수량': np.int64})
-        pvt_html = df_pvt.to_html(classes='table table-sm table-bordered', justify='center')
+        def pivot(df):
+            pvt = pd.pivot_table(df, values=['수량'], index=['발행처'], aggfunc='sum', margins=True, margins_name='합계')
+            pvt = pvt.astype({'수량': np.int64})
+            return pvt
 
-    df_ret = df_ret.groupby(['약품명', '환산단위', '주사그룹번호(입)'], group_keys=False).agg('sum')[['수량']].reset_index()
-    df_ret = df_ret[['주사그룹번호(입)', '약품명', '수량', '환산단위']]
-    df_ret = df_ret.sort_values(['주사그룹번호(입)', '약품명'])
-    df_ret = df_ret.astype({'수량': np.int64})
+        df_pvt = df_ret.groupby(['주사그룹번호(입)', '약품명']).apply(pivot)
+        html = df_pvt.to_html(classes='table table-sm table-bordered', justify='center')
+    else:
+        df_ret = df_ret.groupby(['약품명', '환산단위', '주사그룹번호(입)'], group_keys=False).agg('sum')[['수량']].reset_index()
+        df_ret = df_ret[['주사그룹번호(입)', '약품명', '수량', '환산단위']]
+        df_ret = df_ret.sort_values(['주사그룹번호(입)', '약품명'])
+        df_ret = df_ret.astype({'수량': np.int64})
+        html = df_ret.to_html(classes='table table-sm table-bordered', justify='center', index=False)
 
     count_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    table_html = df_ret.to_html(
-        classes='table table-sm table-bordered', justify='center', index=False)
-    table_html += f"<p>집계일시: {count_at}</p>"
-    if bywords is True:
-        table_html += pvt_html
-    return table_html
+    html += f"<p>집계일시: {count_at}</p>"
+    return html

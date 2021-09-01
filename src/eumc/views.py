@@ -1,25 +1,38 @@
-from re import template
-from django.shortcuts import render, HttpResponseRedirect
-from django.urls import reverse_lazy
-from django.utils.safestring import mark_safe
+from django.shortcuts import render
 
+from django.utils.safestring import mark_safe
+from django.views.generic import FormView
+from hitcount.views import HitCountDetailView
 
 from .models import EumcDrugData
 from .forms import PrnDataInputForm
 from .services import create_prn
 
 
-def prn_count(request):
-    form = PrnDataInputForm(request.POST or None)
-    if request.method == 'GET':
-        context = {
-            'form': form
-        }
-        return render(request, 'eumc/prn_count.html', context)
-    if form.is_valid():
-        obj = EumcDrugData.objects.first()
-        rendered_table = create_prn(obj, **form.cleaned_data)
+
+
+class PrnCountView(FormView, HitCountDetailView):
+    model = EumcDrugData
+    template_name = 'eumc/prn_count.html'
+    form_class = PrnDataInputForm
+    success_url = '.'
+    count_hit = True
+
+    def get_object(self, queryset=None):
+        self.object = EumcDrugData.objects.first()
+        return self.object
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = PrnDataInputForm(None)
+        context['form'] = form
+        return context
+    
+    def form_valid(self, form):
+        super().form_valid(form)
+        object = self.get_object()
+        rendered_table = create_prn(object, **form.cleaned_data)
         context = {
             'table': mark_safe(rendered_table)
         }
-        return render(request, 'eumc/prn_count_result.html', context)
+        return render(self.request, 'eumc/prn_count_result.html', context)
