@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render
 
 from django.utils.safestring import mark_safe
@@ -9,7 +11,7 @@ from .forms import PrnDataInputForm
 from .services import create_prn
 
 
-
+logger = logging.getLogger('eumc')
 
 class PrnCountView(FormView, HitCountDetailView):
     model = EumcDrugData
@@ -31,7 +33,14 @@ class PrnCountView(FormView, HitCountDetailView):
     def form_valid(self, form):
         super().form_valid(form)
         object = self.get_object()
+
         rendered_table = create_prn(object, **form.cleaned_data)
+        
+        logger.info({
+            'injgroups': form.cleaned_data['injgroups'],
+            'bywords': form.cleaned_data['bywords']
+        })
+
         context = {
             'table': mark_safe(rendered_table)
         }

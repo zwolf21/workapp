@@ -21,5 +21,5 @@ from .views import IndexView
 urlpatterns = [
     path('', IndexView.as_view(), name='home'),
     path('admin/', admin.site.urls),
-    path('eumc/', include('eumc.urls'), name='eumc'),
+    path('eumc/', include('eumc.urls', namespace='eumc')),
 ]
