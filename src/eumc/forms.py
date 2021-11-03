@@ -1,4 +1,8 @@
 from django import forms
+from django.forms import fields
+
+from .models import EumcDrugData
+
 
 
 class PrnDataInputForm(forms.Form):
@@ -25,3 +29,15 @@ class PrnDataInputForm(forms.Form):
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         required=False
     )
+
+
+
+
+class DrugUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = EumcDrugData
+        fields = 'rawdata',
+        widgets = {
+            'rawdata': forms.FileInput(attrs={'class':'form-control'})
+        }

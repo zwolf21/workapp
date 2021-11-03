@@ -1,0 +1,59 @@
+{% include 'index.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-sm">
+    <div class="row justify-content-md-center">
+        <div class="col-md-6 my-5">
+
+            <p class="text-center">
+                약품정보 엑셀 파일을 등록하세요
+            </p>
+
+            <form action="{% url 'eumc:prn-count-create' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.rawdata }}
+                </div>
+                <div class="form-group my-1">
+                    <button class="btn btn-primary form-control" type="submit">등록</button>
+                </div>
+            </form>
+            
+            <div class="my-4 text-center">
+                
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    ※ 약품정보 엑셀파일 얻는 방법
+                </button>
+                
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">약품 검색메뉴</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>1. '약품검색' 메뉴 검색</p>
+                            <p>2. 아래 그림과 같이 모든 체크박스 전부 체크 후 엑셀을 클릭</p>
+                            <a href="{% static 'assets/eumc/drug_search.JPG' %}">
+                                <img width="100%" src="{% static 'assets/eumc/drug_search.JPG' %}" alt="약품검색메뉴">
+                            </a>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            
+            
+            
+        </div>
+    </div>
+</div>
+{% endblock content %}

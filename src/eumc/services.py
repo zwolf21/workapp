@@ -39,13 +39,21 @@ def _split_amtunit(df, columns, pfix_amt='amt', pfix_unit='unit', amt_astype=np.
         df = df.astype({column_amt: amt_astype})
     return df
 
+def _check_dose_not_exists(df_drug, df_prn):
+    drug_names = set(df_drug['상용약품명'])
+    prn_names = set(df_prn['약품명'])
+    not_exists = prn_names - drug_names
+    return list(not_exists)
+
 
 def create_prn(eumc_drug_obj, prndata, injgroups, bywords=False):
     df_drug = _load_drug_df(eumc_drug_obj.rawdata.file)
     df_prn = _load_prn_df(prndata)
+
+    not_exists = _check_dose_not_exists(df_drug, df_prn)
+
     df_prn = pd.merge(df_prn, df_drug, left_on=['약품명'], right_on=['상용약품명'])
     df_prn = df_prn[['발행처', '약품명', '기본투여단위', '함량', '규격', '환산단위', '투여량', '주사그룹번호(입)', '입력일시']]
-
 
     # '15 ml' -> [15, 'ml'] '0.075 mg' -> [0.075, 'mg']: X_amt, X_unit
     df_prn = _split_amtunit(df_prn, ['투여량', '함량', '규격'])
@@ -87,4 +95,4 @@ def create_prn(eumc_drug_obj, prndata, injgroups, bywords=False):
 
     count_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     html += f"<p>집계일시: {count_at}</p>"
-    return html
+    return html, not_exists

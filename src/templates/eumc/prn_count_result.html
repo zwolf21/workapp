@@ -2,10 +2,25 @@
 
 {% block content %}
 <div class="container-sm">
+
     <div class="row justify-content-md-center">
+
+    {% if messages %}
+        <div class="col-md-6">
+        {% for message in messages %}
+            <p class="alert alert-warning text-center" role="alert">
+                    {{ message }}
+                <br />
+                <a href="{% url 'eumc:prn-count-create' %}">약품정보 업데이트 하러가기</a>
+            </p>
+        {% endfor %}        
+        </div>
+    {% endif %} 
+
         <div class="col-md-auto">
             {{ table }}
-        </div>
+        </div>    
+
     </div>
 </div>
 {% endblock content %}
