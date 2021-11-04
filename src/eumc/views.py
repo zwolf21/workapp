@@ -25,7 +25,7 @@ class PrnCountView(FormView, HitCountDetailView):
     count_hit = True
 
     def get_object(self, queryset=None):
-        self.object = EumcDrugData.objects.first()
+        self.object = EumcDrugData.objects.latest()
         return self.object
 
     def get_context_data(self, **kwargs):
@@ -46,7 +46,6 @@ class PrnCountView(FormView, HitCountDetailView):
             msg = f'''{drug} 등 {count} 건의 항목이 약품정보에 등록되어 있지 않아 집계되지 않았습니다. 약품정보를 업데이트 해야합니다.
                 (신약이 추가된 경우 약품정보를 업데이트 하지 않으면 집계 되지 않을 수 있음)
             '''
-            
             messages.add_message(self.request, messages.WARNING, msg)
             logger.info({'not_counted': not_exists_in_druginfo})
         
