@@ -23,7 +23,7 @@ ENV_DIR = BASE_DIR.parent
 SECRET_KEY = 'django-insecure-v%3wuxykgd7!oer18@5w#)#t35ex@4*q51p#)vot(y3*x8j(9('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
