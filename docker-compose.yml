@@ -8,15 +8,13 @@ services:
       - ./config/nginx:/etc/nginx/conf.d
     depends_on:
       - app
+    ports:
+      - 8001:80
 
   app:
     container_name: workapp-app
     build: .
     volumes:
       - .:/code
-    command: bash -c "python manage.py collectstatic --noinput && python manage.py makemigrations  && python manage.py migrate && gunicorn workapp.wsgi:application --bind 0.0.0.0:8000 --reload"
+    command: bash -c "python manage.py collectstatic --noinput && python manage.py makemigrations && python manage.py migrate && gunicorn workapp.wsgi:application --bind 0.0.0.0:8000 --reload"
 
-networks:
-  default:
-    external:
-      name: server-proxy_default
