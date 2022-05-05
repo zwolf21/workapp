@@ -1,21 +1,22 @@
 version: "3.7"
 services:
   nginx:
-    container_name: nginx
+    container_name: workapp-server
     image: nginx:latest
     volumes:
       - .:/code
       - ./config/nginx:/etc/nginx/conf.d
-    ports:
-      - "80:80"
     depends_on:
-      - python
+      - app
 
-  python:
-    container_name: python
+  app:
+    container_name: workapp-app
     build: .
     volumes:
       - .:/code
     command: bash -c "python manage.py collectstatic --noinput && python manage.py makemigrations  && python manage.py migrate && gunicorn workapp.wsgi:application --bind 0.0.0.0:8000 --reload"
-    expose:
-      - "8000"
+
+networks:
+  default:
+    external:
+      name: server-proxy_default
